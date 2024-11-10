@@ -122,21 +122,29 @@ route.get('/doctorbyhopital/:id', async (req, res, next) => {
       const hopital_id = req.params.id;
       // Construire la requête SQL avec une variable $filterCdt
       let sql = `
-SELECT
-
-    hm.hopitalmedecins_id,
-    hm.hopitalmedecins_fullname,
-    hm.hopitalmedecins_phone,
-    hm.hopitalmedecins_description,
-    hm.hopitalmedecins_photo,
-    hm.hopitalmedecins_langs,
-    hm.hopitalmedecins_status,
-    hm.hopitalmedecins_cvfile
-FROM
-    hopital_medecins hm
-WHERE
-    hm.hopital_id = ${parseInt(hopital_id)}                             
-`;
+      SELECT 
+          m.hopitalmedecins_id,
+          m.hopital_id,
+          m.hopitalmedecins_fullname,
+          m.hopitalmedecins_phone,
+          m.hopitalmedecins_description,
+          m.hopitalmedecins_photo,
+          m.hopitalmedecins_langs,
+          m.hopitalmedecins_status,
+          m.hopitalmedecins_cvfile,
+          p.procedure_id,
+          p.procedure_name,
+          p.procedure_description
+      FROM 
+          hopital_medecins AS m
+      LEFT JOIN 
+          hopital_medecins_procedures AS mp ON m.hopitalmedecins_id = mp.medecin_id
+      LEFT JOIN 
+          procedures AS p ON mp.procedure_id = p.procedure_id
+      WHERE
+          m.hopital_id = ${parseInt(hopital_id)}
+      `;
+      
       // Exécution de la requête SQL
       const hopitaldoctor = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
       return res.status(200).json(hopitaldoctor);

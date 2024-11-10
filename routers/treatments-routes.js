@@ -17,7 +17,7 @@ route .post('/createtreatment',(req,res,next)=>{
 })
 
 
-/// valid
+/// valideeeeee
 route.get('/treatments', async(req,res,next)=>{
     let sql = `
 
@@ -39,8 +39,7 @@ route.get('/treatmentbyhopital/:id', async (req, res, next) => {
         // Construire la requête SQL avec une variable $filterCdt
         let sql = `
 
-        SELECT 
-p.procedure_name
+        SELECT *
         FROM procedures p
         JOIN hopital_procedures hp ON p.procedure_id = hp.procedures_id
         WHERE hp.hopital_id = ${parseInt(hopital_id)}

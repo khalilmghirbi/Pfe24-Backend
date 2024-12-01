@@ -3,7 +3,7 @@ const route= express.Router()
 const db= require('../models/index')
 //const Docteur = require("../models/docteur")
 const { sequelize}  = require('../models'); // Assurez-vous que le chemin est correct
-
+const DoctorDTO = require('../dtos/doctorDto')
 
 route .post('/createdocteur',(req,res,next)=>{
     db.Hopital_medecins.create({
@@ -107,8 +107,9 @@ LEFT JOIN
 
 // Exécution de la requête SQL
 const doctors = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-
-return res.status(200).json(doctors);
+const doctorDto = dossiers.map(doctor => new DoctorDTO(doctor))
+return res.status(200).json(doctorDto);
+//return res.status(200).json(doctors);
 } catch (error) {
 console.error('Error retrieving doctors:', error);
 return res.status(500).json({ message: 'Error retrieving doctors', error: error.message });
@@ -147,7 +148,9 @@ route.get('/doctorbyhopital/:id', async (req, res, next) => {
       
       // Exécution de la requête SQL
       const hopitaldoctor = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-      return res.status(200).json(hopitaldoctor);
+      const doctorDto = hopitaldoctor.map(doctor => new DoctorDTO(doctor))
+      return res.status(200).json(doctorDto);
+     // return res.status(200).json(hopitaldoctor);
   } catch (error) {
       console.error('Error retrieving hopitaldoctor:', error);
       return res.status(500).json({ message: 'Error retrieving hopitaldoctor', error: error.message });

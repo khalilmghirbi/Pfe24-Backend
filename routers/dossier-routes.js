@@ -6,6 +6,8 @@ const { where } = require('sequelize')
 const { sequelize, dossier, client, dossier_rdv, Dossier_cliniques, hopital, ville, users } = require('../models'); // Assurez-vous que le chemin est correct
 const { dateToDbFormat } = require('../helpers/dateHelper');
 const bodyParser = require('body-parser')
+const DossierDTO = require('../dtos/dossierDto')
+const { QueryTypes } = require('sequelize'); // Import QueryTypes
 //const hopital_hotelsController = require("../controlles/hopital_hotelsController")
 
 
@@ -127,7 +129,13 @@ route.get('/dossiers', async (req, res, next) => {
         // Construction de la requête SQL
         let sql = `SELECT
                         client_nom, 
+                        hopitalmanager_fullname,
+                        hopital_name,
+                        client_age,
+                        client_sexe,                    
+                        client_smoker,
                         processed_by,
+                        
                         ur.username,
                         d.*, 
                         MIN(dc.dispatch_datetime) AS dispatch_datetime,
@@ -140,6 +148,7 @@ route.get('/dossiers', async (req, res, next) => {
                 LEFT JOIN dossier_rdv ON rdv_dossier_id = d.dossier_id
                 LEFT JOIN dossier_cliniques dc ON dc.dossier_id = d.dossier_id
                 LEFT JOIN hopital h ON h.hopital_id = dc.hopital_id
+                LEFT JOIN hopital_managers hm ON hm.hopitalmanager_id = dc.processed_by
                 LEFT JOIN ville ON ville_id = dossier_destination
                 LEFT JOIN users u ON u.client_id = client.client_id
                 LEFT JOIN users ur ON ur.id_user = d.dossier_responsable
@@ -154,8 +163,8 @@ route.get('/dossiers', async (req, res, next) => {
 
         // Exécution de la requête SQL
         const dossiers = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-
-        return res.status(200).json(dossiers);
+        const dossiersDto = dossiers.map(dossier => new DossierDTO(dossier))
+        return res.status(200).json(dossiersDto);
     } catch (error) {
         console.error('Error retrieving dossiers:', error);
         return res.status(500).json({ message: 'Error retrieving dossiers', error: error.message });
@@ -212,14 +221,14 @@ route.get('/dossiers/:id', async (req, res, next) => {
     return res.status(500).json({ message: 'Error retrieving dossier', error: error.message });
   }
 });
-
+/*
 // Route pour récupérer le statut du dossier
 route.get('/dossier/status/:dossier_id', async (req, res) => {
     const dossierId = req.params.dossier_id;
 
     try {
         // Recherche du dossier clinique avec l'hôpital correspondant à l'utilisateur créateur
-        const dossier = await dossier_cliniques.findOne({
+        const dossier = await Dossier_cliniques.findOne({
             where: { dossier_id: dossierId },
             include: [{ model: hopital }]
         });
@@ -307,6 +316,113 @@ route.get('/dossier/status/:dossier_id', async (req, res) => {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+});*/
+/*
+ route.get('/dossier/status/:dossier_id', async (req, res) => {
+     let statusOfThisFolder = "Awaiting";
+     const dossierId = req.params.dossier_id;
+     const hospitalId = req.query.hospital_id;
+
+     try {
+       // Fetch dossier status for the specific hospital
+       const result = await sequelize.query(
+       `SELECT MAX(dc.status_hopital) AS others, MIN(dc.status_hopital) AS cancelled, dc.substatus, dc.processed_by
+          FROM dossier_cliniques dc
+          WHERE dc.dossier_id = :dossierId AND dc.hopital_id = :hospitalId`,
+        {
+           replacements: { dossierId, hospitalId },
+          type: QueryTypes.SELECT
+         }
+       );
+  
+       const row = result[0];
+       const status = row.others;
+  
+       // Set dossier status based on retrieved values
+       if (row.cancelled === "-1") {
+         statusOfThisFolder = "Cancelled";
+       } else if (status === "-3") {
+         statusOfThisFolder = "Inf. Rqsted";
+       } else if (status === "-7") {
+         statusOfThisFolder = "Not available";
+       } else if (status === "6") {
+         statusOfThisFolder = "Quoted";
+       } else if (status === "4") {
+         statusOfThisFolder = "Confirmed";
+       } else if (status === "3") {
+         statusOfThisFolder = "Answered and relaunched";
+      } else if (status === "2") {
+         statusOfThisFolder = "Answered";
+       } else if (status === "1") {
+       if (row.substatus === "2") {
+          statusOfThisFolder = `In Process by ${row.processed_by}`;
+         } else if (row.substatus === "0") {
+           statusOfThisFolder = "Not Available";
+        }
+      }
+  
+       return { statusOfThisFolder };
+     } catch (error) {
+       console.error("Error fetching dossier status for hospital:", error);
+       return { statusOfThisFolder: "Error" };
+     }
+});*/
+
+
+route.get('/dossier/status/:dossier_id', async (req, res) => {
+    let statusOfThisFolder = "Awaiting";
+    const dossierId = req.params.dossier_id;
+    const hospitalId = req.query.hospital_id;
+
+    // Check if hospitalId is provided
+    if (!hospitalId) {
+        return res.status(400).json({ error: "hospital_id query parameter is required" });
+    }
+
+    try {
+        // Fetch dossier status for the specific hospital
+        const result = await sequelize.query(
+            `SELECT MAX(dc.status_hopital) AS others, MIN(dc.status_hopital) AS cancelled, dc.substatus, dc.processed_by
+             FROM dossier_cliniques dc
+             WHERE dc.dossier_id = :dossierId AND dc.hopital_id = :hospitalId`,
+            {
+                replacements: { dossierId, hospitalId },
+                type: QueryTypes.SELECT
+            }
+        );
+
+        const row = result[0];
+        const status = row.others;
+
+        // Set dossier status based on retrieved values
+        if (row.cancelled === "-1") {
+            statusOfThisFolder = "Cancelled";
+        } else if (status === "-3") {
+            statusOfThisFolder = "Inf. Rqsted";
+        } else if (status === "-7") {
+            statusOfThisFolder = "Not available";
+        } else if (status === "6") {
+            statusOfThisFolder = "Quoted";
+        } else if (status === "4") {
+            statusOfThisFolder = "Confirmed";
+        } else if (status === "3") {
+            statusOfThisFolder = "Answered and relaunched";
+        } else if (status === "2") {
+            statusOfThisFolder = "Answered";
+        } else if (status === "1") {
+            if (row.substatus === "2") {
+                statusOfThisFolder = `In Process by ${row.processed_by}`;
+            } else if (row.substatus === "0") {
+                statusOfThisFolder = "Not Available";
+            }
+        }
+
+        res.status(200).json({ statusOfThisFolder });
+    } catch (error) {
+        console.error("Error fetching dossier status for hospital:", error);
+        res.status(500).json({ statusOfThisFolder: "Error" });
+    }
 });
+
 
 module.exports= route

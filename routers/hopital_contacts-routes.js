@@ -2,6 +2,7 @@ const express = require('express')
 const route= express.Router()
 const db= require('../models/index')
 const { sequelize } = require('../models');
+const ContactDTO = require('../dtos/contactDto')
 
 
 
@@ -86,7 +87,9 @@ WHERE
   `;
         // Exécution de la requête SQL
         const hopitalcontact = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        return res.status(200).json(hopitalcontact);
+        const contactDto = hopitalcontact.map(contact => new ContactDTO(contact))
+        return res.status(200).json(contactDto);
+       // return res.status(200).json(hopitalcontact);
     } catch (error) {
         console.error('Error retrieving hopitalcontact:', error);
         return res.status(500).json({ message: 'Error retrieving hopitalcontact', error: error.message });

@@ -6,8 +6,8 @@ const { where } = require('sequelize')
 const { sequelize } = require('../models'); 
 //const { dateToDbFormat } = require('../helpers/dateHelper');
 const bodyParser = require('body-parser')
-
 const hopital_hotelsController = require("../controlles/hopital_hotelsController")
+const HotelDTO = require('../dtos/hotelDto')
 
 route .post('/createhotel',(req,res,next)=>{
     db.Hopital_hotels.create({
@@ -87,7 +87,9 @@ FROM hopital_hotels
 `;
       // Exécution de la requête SQL
       const hopitalhotels = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-      return res.status(200).json(hopitalhotels);
+      const hotelDto = hopitalhotels.map(hotel => new HotelDTO(hotel))
+      return res.status(200).json(hotelDto);
+      //return res.status(200).json(hopitalhotels);
   } catch (error) {
       console.error('Error retrieving hotels:', error);
       return res.status(500).json({ message: 'Error retrieving hotels', error: error.message });

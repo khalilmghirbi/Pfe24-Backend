@@ -4,6 +4,7 @@ const db= require('../models/index')
 const { Op, Sequelize } = require('sequelize');
 const { sequelize ,Hopital_avis, Dossier_cliniques, Hopital, Hopital_managers } = require('../models');
 const bodyParser = require('body-parser');
+const ReviewDTO = require('../dtos/reviewDto');
 //const Hopital_avis = require('./models/hopitalavis')(sequelize, Sequelize);
 
 /*
@@ -158,9 +159,10 @@ route.get('/avis', async (req, res, next) => {
         
         // Exécution de la requête SQL
         const reviews = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+        const reviewsDto = reviews.map(dossier => new ReviewDTO(dossier))
 
         
-        return res.status(200).json(reviews);
+        return res.status(200).json(reviewsDto);
     } catch (error) {
         console.error('Error retrieving reviews:', error);
         return res.status(500).json({ message: 'Error retrieving reviews', error: error.message });
@@ -208,9 +210,10 @@ route.get('/avis/:id', async (req, res, next) => {
         
         // Exécution de la requête SQL
         const reviews = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+        const reviewsDto = reviews.map(dossier => new ReviewDTO(dossier))
 
         
-        return res.status(200).json(reviews[0]);
+        return res.status(200).json(reviewsDto);
     } catch (error) {
         console.error('Error retrieving reviews:', error);
         return res.status(500).json({ message: 'Error retrieving reviews', error: error.message });
@@ -218,10 +221,9 @@ route.get('/avis/:id', async (req, res, next) => {
 });
 
 route.put('/avis/:hopitalavis_id', (req,res,next)=>{
-    console.log(req.body)
    db.Hopital_avis.update({
        
-       hopitalavis_reply:req.body.hopitalavis_reply,
+       hopitalavis_reply:req.body.reply,
 
     },{where:{hopitalavis_id:req.params.hopitalavis_id}})
     .then((response)=>res.status(200).send(response))

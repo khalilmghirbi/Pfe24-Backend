@@ -23,7 +23,7 @@ const reviewsofhopital =require("./routers/hopital_reviews-routes")
 
 
 app.use(cors({
-  origin: 'http://localhost:4200', // Allow requests from this origin
+  origin: '*', // Allow requests from this origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));

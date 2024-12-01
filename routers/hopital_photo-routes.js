@@ -2,7 +2,7 @@ const express = require('express')
 const route= express.Router()
 const db= require('../models/index')
 const { sequelize } = require('../models');
-
+const MediaDTO = require('../dtos/mediaDto')
 
 route .post('/createhotel',(req,res,next)=>{
     db.Hopital_photos.create({
@@ -55,7 +55,9 @@ route.delete('/photos/:hopital_photos_id', (req, res, next) => {
   `;
         // Exécution de la requête SQL
         const hopitalmedia = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        return res.status(200).json(hopitalmedia);
+        const mediaDto = hopitalmedia.map(media => new MediaDTO(media))
+        return res.status(200).json(mediaDto);
+        //return res.status(200).json(hopitalmedia);
     } catch (error) {
         console.error('Error retrieving hopitalmedia:', error);
         return res.status(500).json({ message: 'Error retrieving hopitalmedia', error: error.message });

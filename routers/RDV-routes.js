@@ -2,18 +2,19 @@ const express = require('express')
 const route= express.Router()
 const db= require('../models/index')
 const { sequelize } = require('../models');
+const AppointmentDTO = require('../dtos/appointmentDto');
 
 
 /// valider
 route.get('/rdvs', (req,res,next)=>{
     db.Dossier_rdv.findAll()
-    .then((response)=>res.status(200).send(response))
+    .then((response)=>res.status(200).send(response.map(rdv => new AppointmentDTO(rdv))))
     .catch((err)=>res.status(400).send(err))
 })
 
 route.get('/rdv/:rdv_id', (req,res,next)=>{
     db.Hopital_contacts.findOne({where:{rdv_id:req.params.rdv_id}})
-    .then((response)=>res.status(200).send(response))
+    .then((response)=>res.status(200).send(new AppointmentDTO(response)))
     .catch((err)=>res.status(400).send(err))
 })
 
@@ -24,7 +25,7 @@ route.get('/rdvsbydossierid/:id', async (req, res, next) => {
         let sql = `
   SELECT 
             Dossier_rdv.*, 
-            Dossier.*, 
+            Dossier.*,
             Hopital.hopital_id AS hopital_id_hopital, 
             Hopital.hopital_name, 
             Hopital_hotels.hotel_id, 
@@ -44,7 +45,7 @@ route.get('/rdvsbydossierid/:id', async (req, res, next) => {
   `;
         // Exécution de la requête SQL
         const hopitalrdvs = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        return res.status(200).json(hopitalrdvs);
+        return res.status(200).json(hopitalrdvs.map(rdv => new AppointmentDTO(rdv)));
     } catch (error) {
         console.error('Error retrieving rendez-vous:', error);
         return res.status(500).json({ message: 'Error retrieving rendez-vous', error: error.message });

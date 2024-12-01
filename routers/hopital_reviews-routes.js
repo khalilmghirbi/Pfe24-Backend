@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Hopital_avis } = require('../models'); // Adjust the path according to your project structure
 const { sequelize , Dossier_cliniques, Hopital, Hopital_managers } = require('../models');
-
+const ReviewDTO = require('../dtos/reviewDto')
 /*
 // Route to get reviews for a specific hospital
 router.get('/hopital/:hopital_id/avis', async (req, res, next) => {
@@ -86,7 +86,9 @@ router.get('/avisbyhopital/:id', async (req, res, next) => {
   `;
         // Exécution de la requête SQL
         const hopitalavis = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        return res.status(200).json(hopitalavis);
+        const reviewDto = hopitalavis.map(review => new ReviewDTO(review))
+        return res.status(200).json(reviewDto);
+        //return res.status(200).json(hopitalavis);
     } catch (error) {
         console.error('Error retrieving reviews:', error);
         return res.status(500).json({ message: 'Error retrieving reviews', error: error.message });

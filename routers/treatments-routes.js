@@ -7,6 +7,7 @@ const Procedures = require("../models/procedures")
 //const { sequelize } = require('../models'); 
 const { where } = require('sequelize')
 const bodyParser = require('body-parser')
+const TreatmentDTO = require('../dtos/treatmentDto');
 
 route .post('/createtreatment',(req,res,next)=>{
     db.Procedures.create({
@@ -47,7 +48,9 @@ route.get('/treatmentbyhopital/:id', async (req, res, next) => {
   `;
         // Exécution de la requête SQL
         const hopitaltreatments = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        return res.status(200).json(hopitaltreatments);
+        const treatmentDto = hopitaltreatments.map(treatment => new TreatmentDTO(treatment))
+        return res.status(200).json(treatmentDto);
+        //return res.status(200).json(hopitaltreatments);
     } catch (error) {
         console.error('Error retrieving treatments:', error);
         return res.status(500).json({ message: 'Error retrieving treatments', error: error.message });

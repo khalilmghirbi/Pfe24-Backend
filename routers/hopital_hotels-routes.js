@@ -11,7 +11,7 @@ const HotelDTO = require('../dtos/hotelDto')
 
 route .post('/createhotel',(req,res,next)=>{
     db.Hopital_hotels.create({
-        //hotel_hopitalid:req.body.hotel_hopitalid,
+        hotel_hopitalid:req.body.hotel_hopitalid,
         hotel_name:req.body.hotel_name,
         hotel_stars:req.body.hotel_stars,
         hotel_link:req.body.hotel_link,
@@ -80,8 +80,13 @@ route.get('/hotelbyhopital/:id', async (req, res, next) => {
       // Construire la requête SQL avec une variable $filterCdt
       let sql = `
 SELECT 
+hotel_id,
 hotel_name,
-hotel_stars
+hotel_stars,
+hotel_singleroom,
+hotel_doubleroom,
+hotel_link,
+hotel_address
 FROM hopital_hotels  
               where hopital_hotels.hotel_hopitalid = ${parseInt(hopital_id)}                             
 `;

@@ -10,7 +10,7 @@ const ManagerDTO = require('../dtos/managerDto')
 route .post('/createmanager',(req,res,next)=>{
     db.Hopital_managers.create({
 
-        //hopitalmanager_id:req.body.hopitalmanager_id,
+        hopitalmanager_id:req.body.hopitalmanager_id,
         hopital_id:req.body.hopital_id,
         hopitalmanager_fullname:req.body.hopitalmanager_fullname,
         hopitalmanager_phone:req.body.hopitalmanager_phone,
@@ -72,7 +72,7 @@ route.get('/managersbyhopital/:id', async (req, res, next) => {
   `;
         // Exécution de la requête SQL
         const hopitalmanagers = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-        const managerDto = hopitalmanagers.map(manager => new HotelDTO(manager))
+        const managerDto = hopitalmanagers.map(manager => new ManagerDTO(manager))
       return res.status(200).json(managerDto);
         //return res.status(200).json(hopitalmanagers);
     } catch (error) {

@@ -22,7 +22,8 @@ route .post('/createtreatment',(req,res,next)=>{
 route.get('/treatments', async(req,res,next)=>{
     let sql = `
 
-        SELECT *
+        SELECT DISTINCT 
+        procedure_name
         FROM procedures p
         JOIN hopital_procedures hp ON p.procedure_id = hp.procedures_id
         
@@ -30,7 +31,8 @@ route.get('/treatments', async(req,res,next)=>{
   `;
     // Exécution de la requête SQL
     const hopitaltreatments = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
-    return res.status(200).json(hopitaltreatments);
+    return res.status(200).json(hopitaltreatments.map(v => v.procedure_name));
+    
 })
 
 //validée

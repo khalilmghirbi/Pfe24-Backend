@@ -4,11 +4,13 @@ const db= require('../models/index')
 const { sequelize } = require('../models');
 const MediaDTO = require('../dtos/mediaDto')
 
-route .post('/createhotel',(req,res,next)=>{
+route .post('/addphoto',(req,res,next)=>{
     db.Hopital_photos.create({
-        //hotel_hopitalid:req.body.hotel_hopitalid,
-        hotel_name:req.body.hotel_name,
-        
+        photo_path:req.body.photo_path,
+        hopital_id:req.body.hopital_id,
+        photo_desc:req.body.photo_desc, 
+        photo_type:req.body.photo_type,
+        display_order:req.body.display_order
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
 })

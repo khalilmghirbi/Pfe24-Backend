@@ -20,6 +20,7 @@ const Rdvs =require("./routers/RDV-routes")
 const quote =require("./routers/quotations-routes")
 const clinics =require("./routers/clinics")
 const reviewsofhopital =require("./routers/hopital_reviews-routes")
+const lang =require("./routers/lang")
 
 
 app.use(cors({
@@ -45,6 +46,7 @@ app.use('/',Rdvs);
 app.use('/',quote);
 app.use('/',clinics);
 app.use('/',reviewsofhopital);
+app.use('/',lang);
 
 //lorsque on va utiliser Front :angular 
 app.use((req,res,next)=>{

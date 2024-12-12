@@ -121,7 +121,6 @@ return res.status(500).json({ message: 'Error retrieving doctors', error: error.
 route.get('/doctorbyhopital/:id', async (req, res, next) => {
   try {
       const hopital_id = req.params.id;
-      // Construire la requête SQL avec une variable $filterCdt
       let sql = `
       SELECT 
           m.hopitalmedecins_id,
@@ -144,8 +143,7 @@ route.get('/doctorbyhopital/:id', async (req, res, next) => {
           procedures AS p ON mp.procedure_id = p.procedure_id
       WHERE
           m.hopital_id = ${parseInt(hopital_id)}
-      `;
-      
+      `;  
       // Exécution de la requête SQL
       const hopitaldoctor = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
       const doctorDto = hopitaldoctor.map(doctor => new DoctorDTO(doctor))

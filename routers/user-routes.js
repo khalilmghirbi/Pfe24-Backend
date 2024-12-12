@@ -33,7 +33,8 @@ route.post('/register', (req, res, next) => {
 ////// login  validee
 //const PrivateKey = "this is private key nfjvfccjffdwxdwsj::;!!!:;!:;!:!:;;;l,jhhghvfxyateeki"
 route .post('/admin/login', (req,res,next)=>{
-    userController.login(req.body.email , req.body.user_pass)
+    userController.login(req.body.email , req.body.password
+    )
     .then(token=>res.status(200).json({token:token}))
     .catch(err=>res.status(400).json({err:err}))
     /*db.User.findOne({ where: { email: req.body.email } }).then(user=>{

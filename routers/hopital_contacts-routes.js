@@ -6,13 +6,13 @@ const ContactDTO = require('../dtos/contactDto')
 
 
 
-route .post('/createcontact',(req,res,next)=>{
+route .post('/createcontact/:hopital_id',(req,res,next)=>{
     db.Hopital_contacts.create({
         //hopitalcontacts_id:req.body.hopitalcontacts_id,
-        //hopital_id:req.body.hopital_id,
-        hopitalcontacts_fullname:req.body.hopitalcontacts_fullname,
+        hopital_id:req.params.hopital_id,
+        hopitalcontacts_fullname:req.body.name,
         //hopitalcontacts_phone:req.body.hopitalcontacts_phone,
-        hopitalcontacts_email:req.body.hopitalcontacts_email,
+        hopitalcontacts_email:req.body.email,
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
 })
@@ -36,9 +36,9 @@ route.put('/contact/:hopitalcontacts_id', (req,res,next)=>{
     db.Hopital_contacts.update({
         //hopitalcontacts_id:req.body.hopitalcontacts_id,
         // hopital_id:req.body.hopital_id,
-        hopitalcontacts_fullname:req.body.hopitalcontacts_fullname,
+        hopitalcontacts_fullname:req.body.name,
        // hopitalcontacts_phone:req.body.hopitalcontacts_phone,
-        hopitalcontacts_email:req.body.hopitalcontacts_email,
+        hopitalcontacts_email:req.body.email,
     },{where:{hopitalcontacts_id:req.params.hopitalcontacts_id}})
     .then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))

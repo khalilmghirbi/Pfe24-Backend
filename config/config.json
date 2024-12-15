@@ -1,24 +1,24 @@
 {
   "development": {
     "username": "root",
-    "password": "213JMT1007",
-    "database": "TSdb",
+    "password": "Mavie@1995",
+    "database": "PfeDb",
     "host": "localhost",
     "port": 3306,
     "dialect": "mariadb"
   },
   "test": {
     "username": "root",
-    "password": "213JMT1007",
-    "database": "TSdb",
+    "password": "Mavie@1995",
+    "database": "PfeDb",
     "host": "localhost",
     "port": 3306,
     "dialect": "mariadb"
   },
   "production": {
     "username": "root",
-    "password": "213JMT1007",
-    "database": "TSdb",
+    "password": "Mavie@1995",
+    "database": "PfeDb",
     "host": "localhost",
     "port": 3306,
     "dialect": "mariadb"

@@ -1,20 +1,21 @@
 const express = require('express')
 const route= express.Router()
 const db= require('../models/index')
-//const Docteur = require("../models/docteur")
 const { sequelize}  = require('../models'); // Assurez-vous que le chemin est correct
 const DoctorDTO = require('../dtos/doctorDto')
 
-route .post('/createdocteur',(req,res,next)=>{
+route .post('/createdocteur/:hopitalmedecins_id',(req,res,next)=>{
+    const languages = req.body.languages;
+    let language = (!languages || languages.length === 0) ?  "":languages[0];
     db.Hopital_medecins.create({
-        hopital_id:req.body.hopital_id,
-        hopitalmedecins_fullname:req.body.hopitalmedecins_fullname,
-        hopitalmedecins_phone:req.body.hopitalmedecins_phone,
-        hopitalmedecins_description:req.body.hopitalmedecins_description,
-        hopitalmedecins_photo:req.body.hopitalmedecins_photo,
-        hopitalmedecins_langs:req.body.hopitalmedecins_langs,
-        hopitalmedecins_status:req.body.hopitalmedecins_status,
-        hopitalmedecins_cvfile:req.body.hopitalmedecins_cvfile
+        hopital_id:req.params.hopitalmedecins_id,
+        hopitalmedecins_fullname:req.body.name,
+        hopitalmedecins_phone:req.body.phone,
+        hopitalmedecins_description:req.body.description,
+        hopitalmedecins_photo:req.body.photo,
+        hopitalmedecins_langs:language,
+        hopitalmedecins_status:req.body.status,
+        hopitalmedecins_cvfile:req.body.cv
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
 })
@@ -34,15 +35,17 @@ route.get('/docteurs', (req,res,next)=>{
 })*/
 
 route.put('/docteur/:hopitalmedecins_id', (req,res,next)=>{
+    const languages = req.body.languages;
+    let language = (!languages || languages.length === 0) ?  "":languages[0];
     db.Hopital_medecins.update({
-      hopital_id:req.body.hopital_id,
-      hopitalmedecins_fullname:req.body.hopitalmedecins_fullname,
-      hopitalmedecins_phone:req.body.hopitalmedecins_phone,
-      hopitalmedecins_description:req.body.hopitalmedecins_description,
-      hopitalmedecins_photo:req.body.hopitalmedecins_photo,
-      hopitalmedecins_langs:req.body.hopitalmedecins_langs,
-      hopitalmedecins_status:req.body.hopitalmedecins_status,
-      hopitalmedecins_cvfile:req.body.hopitalmedecins_cvfile },
+      hopital_id:req.body.hopitalId,
+      hopitalmedecins_fullname:req.body.name,
+      hopitalmedecins_phone:req.body.phone,
+      hopitalmedecins_description:req.body.description,
+      hopitalmedecins_photo:req.body.photo,
+      hopitalmedecins_langs:language,
+      hopitalmedecins_status:req.body.status,
+      hopitalmedecins_cvfile:req.body.cv },
     {where:{hopitalmedecins_id:req.params.hopitalmedecins_id}})
     .then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))

@@ -9,12 +9,27 @@ const { where } = require('sequelize')
 const bodyParser = require('body-parser')
 const TreatmentDTO = require('../dtos/treatmentDto');
 
-route .post('/createtreatment',(req,res,next)=>{
-    db.Procedures.create({
-        //hotel_hopitalid:req.body.hotel_hopitalid,
-        procedure_name:req.body.procedure_name,
-    }).then((response)=>res.status(200).send(response))
-    .catch((err)=>res.status(400).send(err))
+route.post('/createtreatment/:id',async (req,res,next)=>{
+    const hopital_id = req.params.id;
+    try {
+        // Step 1: Create the new procedure
+        const procedure = await db.Procedures.create({
+            procedure_name: req.body.name,
+            procedure_name_fr: req.body.name,
+            procedure_name_en: req.body.name,
+            procedure_description_fr: " "
+        });
+
+        // Step 2: Link the created procedure to the hospital
+        await db.Hopital_procedures.create({
+            hopital_id,  // Hospital ID
+            procedures_id: procedure.procedure_id  // Procedure ID from the created procedure
+        });
+    } catch (error) {
+        res.status(400).send(error)
+    }
+
+    return res.status(200).send();
 })
 
 

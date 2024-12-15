@@ -23,7 +23,8 @@ module.exports = (Sequelize, DataTypes) => {
         },
         procedures_price_currency: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true,
+            defaultValue: "EUR"
         }
     }, {
         timestamps: false,

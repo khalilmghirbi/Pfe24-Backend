@@ -3,17 +3,47 @@ const route= express.Router()
 const db= require('../models/index')
 const { sequelize } = require('../models');
 const MediaDTO = require('../dtos/mediaDto')
+const multer = require('multer');
+const path = require('path');// Set up storage configuration for multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Destination folder for uploaded files
+  },
+  filename: (req, file, cb) => {
+    // Save the file with original name, you can modify this logic as needed
+    cb(null, file.originalname);
+  }
+});
 
-route .post('/addphoto',(req,res,next)=>{
+// Initialize multer with storage configuration
+const upload = multer({ storage: storage });
+
+route .post('/addphoto/:id',(req,res,next)=>{
     db.Hopital_photos.create({
-        photo_path:req.body.photo_path,
-        hopital_id:req.body.hopital_id,
-        photo_desc:req.body.photo_desc, 
-        photo_type:req.body.photo_type,
-        display_order:req.body.display_order
+        photo_path:req.body.path,
+        hopital_id:req.params.id,
+        photo_desc:req.body.desc,
+        photo_type:req.body.type,
+        display_order:req.body.displayOrder
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
 })
+
+// Create a POST endpoint for file upload
+route.post('/photo/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  // Respond with the full file info
+  res.status(200).json(req.file);
+});
+
+// Make sure 'uploads' directory exists
+const fs = require('fs');
+const uploadDir = './uploads';
+if (!fs.existsSync(uploadDir)){
+  fs.mkdirSync(uploadDir);
+}
 
 /// valider
 route.get('/photos', (req,res,next)=>{

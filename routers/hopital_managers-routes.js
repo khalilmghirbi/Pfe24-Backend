@@ -7,17 +7,12 @@ const bodyParser = require('body-parser')
 const { sequelize } = require('../models');
 const ManagerDTO = require('../dtos/managerDto')
 
-route .post('/createmanager',(req,res,next)=>{
+route .post('/createmanager/:id',(req,res,next)=>{
     db.Hopital_managers.create({
-
-        hopitalmanager_id:req.body.hopitalmanager_id,
-        hopital_id:req.body.hopital_id,
-        hopitalmanager_fullname:req.body.hopitalmanager_fullname,
-        hopitalmanager_phone:req.body.hopitalmanager_phone,
-        hopitalmanager_email:req.body.hopitalmanager_email,
-        hopitalmanager_photo:req.body.hopitalmanager_photo,
-        hopitalmanager_countries:req.body.hopitalmanager_countries,
-        //hopitalmanager_deleted:req.body.hopitalmanager_deleted,
+        hopital_id:req.params.id,
+        hopitalmanager_fullname:req.body.name,
+        hopitalmanager_email:req.body.email,
+        hopitalmanager_countries:req.body.country,
 
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
@@ -60,9 +55,12 @@ route.get('/managersbyhopital/:id', async (req, res, next) => {
         // Construire la requête SQL avec une variable $filterCdt
         let sql = `
  SELECT
+            hm.hopitalmanager_id,
             hm.hopitalmanager_fullname,
             hm.hopitalmanager_email,
-            hm.hopitalmanager_countries
+            hm.hopitalmanager_countries,
+            hm.hopitalmanager_phone,
+            h.hopital_name
         FROM
             hopital_managers hm
         JOIN

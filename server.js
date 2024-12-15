@@ -1,4 +1,5 @@
 const express= require("express")
+const path = require('path');// Set up storage configuration for multer
 const app = express()
 const cors = require('cors');
 /////////
@@ -47,6 +48,7 @@ app.use('/',quote);
 app.use('/',clinics);
 app.use('/',reviewsofhopital);
 app.use('/',lang);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 //lorsque on va utiliser Front :angular 
 app.use((req,res,next)=>{
@@ -60,6 +62,7 @@ app.use((req,res,next)=>{
 db.sequelize.sync().then(()=>{
     app.listen(4000,()=>console.log("server listening in port 4000"))
 })
+
 
 /*const express = require('express');
 const Sequelize = require('sequelize');

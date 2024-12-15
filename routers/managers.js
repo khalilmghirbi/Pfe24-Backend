@@ -123,10 +123,8 @@ route.delete('/managerUs/:hopitalmanager_id', (req, res, next) => {
 route.put('/managerUsupdate/:hopitalmanager_id', (req,res,next)=>{
   db.Hopital_managers.update({
 
-      hopitalmanager_fullname:req.body.hopitalmanager_fullname,
-      hopitalmanager_email:req.body.hopitalmanager_email,
-      hopitalmanager_phone:req.body.hopitalmanager_phone,
-      hopital_name:req.body.hopital_name,
+      hopitalmanager_fullname:req.body.name,
+      hopitalmanager_email:req.body.email
       
   },{where:{hopitalmanager_id:req.params.hopitalmanager_id}})
   .then((response)=>res.status(200).send(response))

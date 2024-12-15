@@ -9,15 +9,15 @@ const bodyParser = require('body-parser')
 const hopital_hotelsController = require("../controlles/hopital_hotelsController")
 const HotelDTO = require('../dtos/hotelDto')
 
-route .post('/createhotel',(req,res,next)=>{
+route.post('/createhotel/:id',(req,res,next)=>{
     db.Hopital_hotels.create({
-        hotel_hopitalid:req.body.hotel_hopitalid,
-        hotel_name:req.body.hotel_name,
-        hotel_stars:req.body.hotel_stars,
-        hotel_link:req.body.hotel_link,
-        hotel_singleroom:req.body.hotel_singleroom,
-        hotel_doubleroom:req.body.hotel_doubleroom,
-        hotel_address:req.body.hotel_address
+        hotel_hopitalid:req.params.id,
+        hotel_name:req.body.name,
+        hotel_stars:req.body.rating,
+        hotel_link:req.body.url,
+        hotel_singleroom:req.body.simpleRoom,
+        hotel_doubleroom:req.body.doubleRoom,
+        hotel_address:req.body.location
     }).then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))
 })
@@ -40,12 +40,12 @@ route.get('/hotels', (req,res,next)=>{
 route.put('/hotel/:hotel_id', (req,res,next)=>{
     db.Hopital_hotels.update({
        // hotel_hopitalid:req.body.hotel_hopitalid,
-        hotel_name:req.body.hotel_name,
-        hotel_stars:req.body.hotel_stars,
-        hotel_link:req.body.hotel_link,
-        hotel_singleroom:req.body.hotel_singleroom,
-        hotel_doubleroom:req.body.hotel_doubleroom,
-        hotel_address:req.body.hotel_address
+        hotel_name:req.body.name,
+        hotel_stars:req.body.rating,
+        hotel_link:req.body.url,
+        hotel_singleroom:req.body.simpleRoom,
+        hotel_doubleroom:req.body.doubleRoom,
+        hotel_address:req.body.location
     },{where:{hotel_id:req.params.hotel_id}})
     .then((response)=>res.status(200).send(response))
     .catch((err)=>res.status(400).send(err))

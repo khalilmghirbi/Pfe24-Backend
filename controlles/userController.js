@@ -64,7 +64,7 @@ exports.login= (email,user_pass)=>{
     return new Promise((resolve ,reject )=>{
         db.User.findOne({ where: { email:email } }).then(user=>{
             if(!user){
-                reject("invalid email and password")
+                reject(`invalid email ${email}`)
             }else {
                 bcrypt.compare(user_pass,user.user_pass).then(same=>{
                     if(same){
@@ -77,7 +77,7 @@ exports.login= (email,user_pass)=>{
                         //resolve(token)
                         resolve({ token: token, username: user.username, id_user: user.id_user  });                        
                     } else {
-                        reject("invalid email and password")
+                        reject("invalid email and password combination")
                     }
                 })
             }

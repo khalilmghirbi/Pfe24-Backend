@@ -135,7 +135,6 @@ route.get('/dossiers', async (req, res, next) => {
                         client_sexe,                    
                         client_smoker,
                         processed_by,
-                        
                         ur.username,
                         d.*, 
                         MIN(dc.dispatch_datetime) AS dispatch_datetime,

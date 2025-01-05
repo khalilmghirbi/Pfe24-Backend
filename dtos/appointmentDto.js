@@ -1,5 +1,6 @@
 class AppointmentDTO {
     constructor(data) {
+      this.id = data.rdv_id
       this.hospital = data.hopital_name || "";
       this.date = data.rdv_datetime;
       this.status = this.getStatusName(data.rdv_confirmed); // Default status if none provided

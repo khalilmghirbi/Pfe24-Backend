@@ -1,21 +1,21 @@
 const express = require('express')
-const route= express.Router()
-const db= require('../models/index')
+const route = express.Router()
+const db = require('../models/index')
 const { sequelize } = require('../models');
 const AppointmentDTO = require('../dtos/appointmentDto');
 
 
 /// valider
-route.get('/rdvs', (req,res,next)=>{
+route.get('/rdvs', (req, res, next) => {
     db.Dossier_rdv.findAll()
-    .then((response)=>res.status(200).send(response.map(rdv => new AppointmentDTO(rdv))))
-    .catch((err)=>res.status(400).send(err))
+        .then((response) => res.status(200).send(response.map(rdv => new AppointmentDTO(rdv))))
+        .catch((err) => res.status(400).send(err))
 })
 
-route.get('/rdv/:rdv_id', (req,res,next)=>{
-    db.Hopital_contacts.findOne({where:{rdv_id:req.params.rdv_id}})
-    .then((response)=>res.status(200).send(new AppointmentDTO(response)))
-    .catch((err)=>res.status(400).send(err))
+route.get('/rdv/:rdv_id', (req, res, next) => {
+    db.Hopital_contacts.findOne({ where: { rdv_id: req.params.rdv_id } })
+        .then((response) => res.status(200).send(new AppointmentDTO(response)))
+        .catch((err) => res.status(400).send(err))
 })
 
 route.get('/rdvsbydossierid/:id', async (req, res, next) => {
@@ -50,6 +50,28 @@ route.get('/rdvsbydossierid/:id', async (req, res, next) => {
         console.error('Error retrieving rendez-vous:', error);
         return res.status(500).json({ message: 'Error retrieving rendez-vous', error: error.message });
     }
-  });
+});
 
-module.exports= route
+//Update the rdv status 
+route.put('/rdv/:id', (req, res, next) => {
+    db.Dossier_rdv.update({
+        rdv_confirmed: getStatus(req.body.status),
+    }, { where: { rdv_id: req.params.id } })
+        .then((response) => res.status(200).send(response))
+        .catch((err) => res.status(400).send(err))
+})
+
+function getStatus(confirmed) {
+    switch (confirmed) {
+        case 'new':
+            return 0;
+        case 'rejected':
+            return -1;
+        case 'confirmed':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+module.exports = route

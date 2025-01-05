@@ -170,15 +170,7 @@ WHERE h.hopital_id = ${parseInt(hopital_id)}
         let sql = `
 
         SELECT 
-    h.hopital_id,
-    h.hopital_name,
-    h.hopital_logo,
-    h.hopital_adress,
-    h.hopital_city,
-    h.hopital_cp,
-    h.hopital_tel,
-    h.hopital_emailcontact,
-    h.hopital_description
+        *        
 FROM 
     hopital h
 WHERE h.hopital_id = ${parseInt(hopital_id)}

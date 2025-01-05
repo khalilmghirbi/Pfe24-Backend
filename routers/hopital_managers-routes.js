@@ -24,13 +24,31 @@ route.get('/manager/:hopitalmanager_id', (req,res,next)=>{
     .catch((err)=>res.status(400).send(err))
 })
 //valider tester front mais manque hopital 
-route.get('/managers', (req,res,next)=>{
-    db.Hopital_managers.findAll()
-    .then((response)=>{
-        const managersDto = response.map(manager => new ManagerDTO(manager))
-        return res.status(200).send(managersDto)
-    })
-    .catch((err)=>res.status(400).send(err))
+route.get('/managers', async (req,res,next)=>{
+    try {
+        // Construire la requête SQL avec une variable $filterCdt
+        let sql = `
+ SELECT
+            hm.hopitalmanager_id,
+            hm.hopitalmanager_fullname,
+            hm.hopitalmanager_email,
+            hm.hopitalmanager_countries,
+            hm.hopitalmanager_phone,
+            h.hopital_name
+        FROM
+            hopital_managers hm
+        JOIN
+            hopital h ON h.hopital_id = hm.hopital_id                            
+  `;
+        // Exécution de la requête SQL
+        const hopitalmanagers = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+        const managerDto = hopitalmanagers.map(manager => new ManagerDTO(manager))
+      return res.status(200).json(managerDto);
+        //return res.status(200).json(hopitalmanagers);
+    } catch (error) {
+        console.error('Error retrieving hopitalmanagers:', error);
+        return res.status(500).json({ message: 'Error retrieving hopitalmanagers', error: error.message });
+    }
 })
 //valider tester front
 route.put('/manager/:hopitalmanager_id', (req,res,next)=>{
